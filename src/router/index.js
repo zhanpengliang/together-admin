@@ -38,12 +38,6 @@ export const constantRoutes = [
   },
 
   {
-    path: '/404',
-    component: () => import('@/views/404'),
-    hidden: true
-  },
-
-  {
     path: '/',
     component: Layout,
     redirect: '/dashboard',
@@ -51,10 +45,88 @@ export const constantRoutes = [
       path: 'dashboard',
       name: 'Dashboard',
       component: () => import('@/views/dashboard/index'),
-      meta: { title: 'Dashboard', icon: 'dashboard' }
+      meta: { title: '主页', icon: 'dashboard' }
     }]
   },
 
+  {
+    path: '/activity',
+    component: Layout,
+    children: [
+      {
+        path: 'list',
+        name: 'activityList',
+        component: () => import('@/views/activity/list'),
+        meta: { title: '活动信息', icon: 'form' }
+      },
+      {
+        path: 'detail',
+        name: 'activityDetail',
+        component: () => import('@/views/activity/detail'),
+        meta: { title: '活动预览', icon: 'form' },
+        hidden: true
+      },
+      {
+        path: 'add',
+        name: 'activityAdd',
+        component: () => import('@/views/activity/add'),
+        meta: { title: '创建活动', icon: 'form' },
+        hidden: true
+      },
+      {
+        path: 'update',
+        name: 'activityUpdate',
+        component: () => import('@/views/activity/update'),
+        meta: { title: '更新活动', icon: 'form' },
+        hidden: true
+      }
+    ]
+  },
+
+  {
+    path: '/order',
+    component: Layout,
+    hidden: true,
+    children: [
+      {
+        path: 'list',
+        name: 'orderList',
+        component: () => import('@/views/order/list'),
+        meta: { title: '参与者信息', icon: 'form' }
+      }
+    ]
+  },
+
+  {
+    path: '/settle',
+    component: Layout,
+    children: [
+      {
+        path: 'list',
+        name: 'settleList',
+        component: () => import('@/views/settle/list'),
+        meta: { title: '结算信息', icon: 'form' },
+      },
+      {
+        path: 'detail',
+        name: 'settleDetail',
+        component: () => import('@/views/settle/detail'),
+        meta: { title: '结算详情', icon: 'form' },
+        hidden: true
+      }
+    ]
+  },
+
+  {
+    path: '/404',
+    component: () => import('@/views/404'),
+    hidden: true
+  },
+
+  // 404 page must be placed at the end !!!
+  { path: '*', redirect: '/404', hidden: true }
+
+  /**
   {
     path: '/example',
     component: Layout,
@@ -89,6 +161,8 @@ export const constantRoutes = [
       }
     ]
   },
+
+
 
   {
     path: '/nested',
@@ -158,9 +232,7 @@ export const constantRoutes = [
       }
     ]
   },
-
-  // 404 page must be placed at the end !!!
-  { path: '*', redirect: '/404', hidden: true }
+  **/
 ]
 
 const createRouter = () => new Router({

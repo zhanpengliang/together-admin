@@ -53,24 +53,17 @@
 </template>
 
 <script>
-import { validUsername } from '@/utils/validate'
+import { login } from '@/api/user'
+import { setLoginCookie, deleteALLCookie } from '@/utils/cookie'
 
 export default {
   name: 'Login',
   data() {
     const validateUsername = (rule, value, callback) => {
-      if (!validUsername(value)) {
-        callback(new Error('Please enter the correct user name'))
-      } else {
-        callback()
-      }
+      callback();
     }
     const validatePassword = (rule, value, callback) => {
-      if (value.length < 6) {
-        callback(new Error('The password can not be less than 6 digits'))
-      } else {
-        callback()
-      }
+      callback();
     }
     return {
       loginForm: {
@@ -109,11 +102,54 @@ export default {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
-          this.$store.dispatch('user/login', this.loginForm).then(() => {
-            this.$router.push({ path: this.redirect || '/' })
+          login({ phoneNumber: this.loginForm.username.trim(), passWord: this.loginForm.password }).then(response => {
+            if (response.status === 200) {
+              const data = response.data;
+              if (data === null || data.status === false || data.accountBean === null) {
+                this.loading = false;
+                deleteALLCookie();
+                this.$alert("用户名或者密码错误！", '登陆失败', {
+                  confirmButtonText: '确定',
+                  callback: action => {
+                  }
+                });
+                return;
+              }
+              if (data.accountBean.accountType !== 1 && data.accountBean.accountType !== 3) {
+                this.loading = false;
+                deleteALLCookie();
+                this.$alert("您目前不能使用创建活动相关功能，如想成为组织者，请先注册！", '登陆失败', {
+                  confirmButtonText: '确定',
+                  callback: action => {
+                  }
+                });
+                return;
+              }
+              setLoginCookie(data.loginToken, data.phoneNumber, data.organizerBean.id, data.expireMillisecond);
+              this.$store.commit('user/SET_TOKEN', data.loginToken);
+              this.$store.commit('user/SET_NAME', data.organizerBean.name);
+              this.$store.commit('user/SET_AVATAR', "https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif");
+              this.$router.push({ path: this.redirect || '/' })
+              this.loading = false
+            } else {
+              this.loading = false;
+              deleteALLCookie();
+              this.$alert(response.statusText, '登陆失败', {
+                confirmButtonText: '确定',
+                callback: action => {
+                }
+              });
+              return;
+            }
+          }).catch(error => {
             this.loading = false
-          }).catch(() => {
-            this.loading = false
+            deleteALLCookie();
+            this.$alert(error, '登陆失败', {
+              confirmButtonText: '确定',
+              callback: action => {
+              }
+            });
+            return;
           })
         } else {
           console.log('error submit!!')

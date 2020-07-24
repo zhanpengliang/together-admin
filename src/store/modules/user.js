@@ -1,12 +1,14 @@
 import { login, logout, getInfo } from '@/api/user'
-import { getToken, setToken, removeToken } from '@/utils/auth'
+import { getToken, getPhoneNumber, getOrganizerId, setLoginCookie, deleteALLCookie } from '@/utils/cookie'
 import { resetRouter } from '@/router'
 
 const getDefaultState = () => {
   return {
     token: getToken(),
+    phoneNumber: getPhoneNumber(),
+    organizerId: getOrganizerId(),
     name: '',
-    avatar: ''
+    avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif'
   }
 }
 
@@ -30,17 +32,6 @@ const mutations = {
 const actions = {
   // user login
   login({ commit }, userInfo) {
-    const { username, password } = userInfo
-    return new Promise((resolve, reject) => {
-      login({ username: username.trim(), password: password }).then(response => {
-        const { data } = response
-        commit('SET_TOKEN', data.token)
-        setToken(data.token)
-        resolve()
-      }).catch(error => {
-        reject(error)
-      })
-    })
   },
 
   // get user info
@@ -68,7 +59,7 @@ const actions = {
   logout({ commit, state }) {
     return new Promise((resolve, reject) => {
       logout(state.token).then(() => {
-        removeToken() // must remove  token  first
+        deleteALLCookie();
         resetRouter()
         commit('RESET_STATE')
         resolve()
@@ -81,7 +72,7 @@ const actions = {
   // remove token
   resetToken({ commit }) {
     return new Promise(resolve => {
-      removeToken() // must remove  token  first
+      deleteALLCookie();
       commit('RESET_STATE')
       resolve()
     })
@@ -94,4 +85,3 @@ export default {
   mutations,
   actions
 }
-
