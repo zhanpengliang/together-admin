@@ -1,11 +1,7 @@
 <template>
   <div class="dashboard-container">
     <el-collapse v-model="activeNames">
-      <el-collapse-item title="公司介绍" name="1">
-        <div style="overflow: auto; margin:30px auto; padding-left: 10px; padding-right: 10px; padding-top: 10px; width: 375px; height: 667px; background-color: #FFFFFF; box-shadow: inset 0px 0px 10px 0px;" v-html="organizerBean.description"></div>
-      </el-collapse-item>
-
-      <el-collapse-item title="公司基本信息" name="2">
+      <el-collapse-item title="公司基本信息-用户不可见" name="2">
         <el-row>
           <el-col :span="6">公司名称：</el-col>
           <el-col :span="18">{{ organizerBean.name }}</el-col>
@@ -62,6 +58,10 @@
           <el-col :span="6">创建时间：</el-col>
           <el-col :span="18">{{ organizerBean.createTime }}</el-col>
         </el-row>
+      </el-collapse-item>
+
+      <el-collapse-item title="公司介绍-用户可见" name="1">
+        <div style="overflow: auto; margin:30px auto; padding-left: 10px; padding-right: 10px; padding-top: 10px; width: 375px; height: 667px; background-color: #FFFFFF; box-shadow: inset 0px 0px 10px 0px;" v-html="organizerBean.description"></div>
       </el-collapse-item>
     </el-collapse>
   </div>

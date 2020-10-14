@@ -103,10 +103,10 @@ export default {
         if (valid) {
           this.loading = true
           login({ phoneNumber: this.loginForm.username.trim(), passWord: this.loginForm.password }).then(response => {
+            this.loading = false;
             if (response.status === 200) {
               const data = response.data;
               if (data === null || data.status === false || data.accountBean === null) {
-                this.loading = false;
                 deleteALLCookie();
                 this.$alert("用户名或者密码错误！", '登陆失败', {
                   confirmButtonText: '确定',
@@ -116,7 +116,6 @@ export default {
                 return;
               }
               if (data.accountBean.accountType !== 1 && data.accountBean.accountType !== 3) {
-                this.loading = false;
                 deleteALLCookie();
                 this.$alert("您目前不能使用创建活动相关功能，如想成为组织者，请先注册！", '登陆失败', {
                   confirmButtonText: '确定',
@@ -127,12 +126,11 @@ export default {
               }
               setLoginCookie(data.loginToken, data.phoneNumber, data.organizerBean.id, data.expireMillisecond);
               this.$store.commit('user/SET_TOKEN', data.loginToken);
+              this.$store.commit('user/SET_ORGANIZER_ID', data.organizerBean.id);
               this.$store.commit('user/SET_NAME', data.organizerBean.name);
               this.$store.commit('user/SET_AVATAR', "https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif");
               this.$router.push({ path: this.redirect || '/' })
-              this.loading = false
             } else {
-              this.loading = false;
               deleteALLCookie();
               this.$alert(response.statusText, '登陆失败', {
                 confirmButtonText: '确定',

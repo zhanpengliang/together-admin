@@ -26,8 +26,7 @@
                   <el-form-item label="籍贯">
                     <span>{{ scope.row.province + ' ' + scope.row.city + ' ' + scope.row.district + ' ' + scope.row.addressDetail }}</span>
                   </el-form-item>
-                  <el-foww
-                  rm-item label="所在公司">
+                  <el-form-item label="所在公司">
                     <span>{{ scope.row.company }}</span>
                   </el-form-item>
                   <el-form-item label="公司任职">

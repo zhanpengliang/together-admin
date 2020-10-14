@@ -176,10 +176,14 @@ export default {
       }
       postData.organizerId = this.$store.state.user.organizerId
       getActivityList(postData).then(response => {
+        this.listLoading = false
         if (response.status === 200) {
           const data = response.data
-          if (data === null || data.status === false) {
-            this.loading = false
+          if (data.status === false) {
+            if (data.errCode !== null && data.errCode === "RECODE_NOT_EXIT") {
+              return
+            }
+            
             this.$alert(data.errMsg, '获取活动列表信息失败', {
               confirmButtonText: '确定',
               callback: action => {
@@ -188,10 +192,9 @@ export default {
             return
           }
           this.list = data.activityBeans
-          this.listLoading = false
+          
           return
         } else {
-          this.loading = false
           this.$alert(response.statusText, '获取活动列表信息失败', {
             confirmButtonText: '确定',
             callback: action => {
@@ -200,7 +203,7 @@ export default {
           return
         }
       }).catch(error => {
-        this.loading = false
+        this.listLoading = true
         this.$alert(error, '获取活动列表信息失败', {
           confirmButtonText: '确定',
           callback: action => {
