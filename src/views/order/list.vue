@@ -37,6 +37,8 @@
 import { getOrderList } from '@/api/orderList.js'
 import { queryImgAddress } from '@/api/image.js'
 import { RECODE_NOT_EXIT } from '@/utils/error.js'
+import { isEmpty } from '@/utils/string.js'
+
 
 export default {
   data() {
@@ -99,7 +101,11 @@ export default {
                 participant.province = participantBean.bornAddress.province
                 participant.city = participantBean.bornAddress.city
                 participant.district = participantBean.bornAddress.district
-                participant.addressDetail = participantBean.bornAddress.detail
+                if (isEmpty(participantBean.bornAddress.detail)) {
+                  participant.addressDetail = ""
+                } else {
+                  participant.addressDetail = participantBean.bornAddress.detail
+                }
               }
               participant.company = participantBean.company
               participant.profession = participantBean.profession

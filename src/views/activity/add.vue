@@ -235,7 +235,7 @@ export default {
               }
             }
           }
-          postData.activityBean.organizerId = this.$store.state.user.organizerId
+          postData.activityBean.accountId = this.$store.state.user.accountId
           postData.activityBean.activityStatus = activityStatus
 
           postData.activityBean.subject = this.activity.subject
@@ -311,8 +311,8 @@ export default {
       editor.customConfig.zIndex = 100
 
       // 显示本地图片上传的tab
-      // editor.customConfig.uploadImgServer = 'https://www.zhanpengliang.com:8888/image/upload'
-      editor.customConfig.uploadImgServer = 'http://127.0.0.1:8888/image/upload'
+      this.editor.customConfig.uploadImgServer = 'https://www.liangqingzaixian.com:9999/image/upload'
+      // this.editor.customConfig.uploadImgServer = 'http://127.0.0.1:9999/image/upload'
       // 隐藏网络图片上传的tab
       editor.customConfig.showLinkImg = false
       // 一次最多传递1张图片

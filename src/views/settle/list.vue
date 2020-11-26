@@ -67,7 +67,7 @@ export default {
       var postData = {
 
       }
-      postData.organizerId = this.$store.state.user.organizerId
+      postData.accountId = this.$store.state.user.accountId
       getSettleList(postData).then(response => {
         this.listLoading = false
         if (response.status === 200) {

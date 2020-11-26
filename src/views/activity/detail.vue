@@ -66,7 +66,7 @@ export default {
     queryActivity() {
       var postData = {
       }
-      postData.organizerId = this.$store.state.user.organizerId
+      postData.accountId = this.$store.state.user.accountId
       postData.id = this.activityId
       queryActivityDetail(postData).then(response => {
         if (response.status === 200) {

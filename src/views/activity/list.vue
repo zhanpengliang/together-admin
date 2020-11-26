@@ -174,7 +174,7 @@ export default {
       this.listLoading = true
       var postData = {
       }
-      postData.organizerId = this.$store.state.user.organizerId
+      postData.accountId = this.$store.state.user.accountId
       getActivityList(postData).then(response => {
         this.listLoading = false
         if (response.status === 200) {
@@ -216,7 +216,7 @@ export default {
     queryActivity(activityId) {
       var postData = {
       }
-      postData.organizerId = this.$store.state.user.organizerId
+      postData.accountId = this.$store.state.user.accountId
       postData.id = activityId
       queryActivityDetail(postData).then(response => {
         if (response.status === 200) {
@@ -271,7 +271,7 @@ export default {
       }
       postData.activityBean.id = row.id
       postData.activityBean.activityStatus = 1
-      postData.activityBean.organizerId = this.$store.state.user.organizerId
+      postData.activityBean.accountId = this.$store.state.user.accountId
       publishActivity(postData).then(response => {
         if (response.status === 200) {
           const data = response.data
@@ -316,7 +316,7 @@ export default {
       }).then(() => {
         var postData = {
         }
-        postData.organizerId = this.$store.state.user.organizerId
+        postData.accountId = this.$store.state.user.accountId
         postData.activityId = row.id
         cancelActivity(postData).then(response => {
           if (response.status === 200) {

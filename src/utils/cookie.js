@@ -17,8 +17,7 @@ export function removeToken() {
 */
 
 export const _loginToken = "loginToken";
-export const _phoneNumber = "phoneNumber";
-export const _organizerId = "organizerId";
+export const _accountId = "accountId";
 
 //设置cookie
 export function setCookie(cname, cvalue, expireUTCTime) {
@@ -57,15 +56,13 @@ export function getCookie(cname) {
 
 export function deleteALLCookie() {
   deleteCookie(_loginToken);
-  deleteCookie(_phoneNumber);
-  deleteCookie(_organizerId);
+  deleteCookie(_accountId);
 }
 
 //设置登陆token
-export function setLoginCookie(loginToken, phoneNumber, organizerId, expireMillisecond) {
+export function setLoginCookie(loginToken, accountId, expireMillisecond) {
   setCookie(_loginToken, loginToken, expireMillisecond);
-  setCookie(_phoneNumber, phoneNumber, expireMillisecond);
-  setCookie(_organizerId, organizerId, expireMillisecond);
+  setCookie(_accountId, accountId, expireMillisecond);
 }
 
 //得到登陆token
@@ -74,11 +71,6 @@ export function getToken() {
 }
 
 //得到登陆token
-export function getPhoneNumber() {
-  return getCookie(_phoneNumber);
-}
-
-//得到登陆token
-export function getOrganizerId() {
-  return getCookie(_organizerId);
+export function getAccountId() {
+  return getCookie(_accountId);
 }

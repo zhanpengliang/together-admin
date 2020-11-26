@@ -124,9 +124,9 @@ export default {
                 });
                 return;
               }
-              setLoginCookie(data.loginToken, data.phoneNumber, data.organizerBean.id, data.expireMillisecond);
+              setLoginCookie(data.loginToken, data.accountId, data.expireMillisecond);
               this.$store.commit('user/SET_TOKEN', data.loginToken);
-              this.$store.commit('user/SET_ORGANIZER_ID', data.organizerBean.id);
+              this.$store.commit('user/SET_ACCOUNT_ID', data.accountId);
               this.$store.commit('user/SET_NAME', data.organizerBean.name);
               this.$store.commit('user/SET_AVATAR', "https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif");
               this.$router.push({ path: this.redirect || '/' })

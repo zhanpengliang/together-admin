@@ -90,7 +90,7 @@ export default {
       var postData = {
 
       }
-      postData.organizerId = this.$store.state.user.organizerId
+      postData.accountId = this.$store.state.user.accountId
       queryOrganizerDetail(postData).then(response => {
         if (response.status === 200) {
           const data = response.data

@@ -1,12 +1,11 @@
 import { login, logout, getInfo } from '@/api/user'
-import { getToken, getPhoneNumber, getOrganizerId, setLoginCookie, deleteALLCookie } from '@/utils/cookie'
+import { getToken, getAccountId, setLoginCookie, deleteALLCookie } from '@/utils/cookie'
 import { resetRouter } from '@/router'
 
 const getDefaultState = () => {
   return {
     token: getToken(),
-    phoneNumber: getPhoneNumber(),
-    organizerId: getOrganizerId(),
+    accountId: getAccountId(),
     name: '',
     avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif'
   }
@@ -21,8 +20,8 @@ const mutations = {
   SET_TOKEN: (state, token) => {
     state.token = token
   },
-  SET_ORGANIZER_ID: (state, organizerId) => {
-    state.organizerId = organizerId
+  SET_ACCOUNT_ID: (state, accountId) => {
+    state.accountId = accountId
   },
   SET_NAME: (state, name) => {
     state.name = name

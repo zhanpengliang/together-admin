@@ -5,7 +5,7 @@
         <el-col :span="3">结算人数：{{ participantCountInfoBean.payCount }}</el-col>
       </el-row>
       <el-row>
-        <el-col :span="3">结算男生人数www：{{ participantCountInfoBean.maleParticipantCount }}</el-col>
+        <el-col :span="3">结算男生人数：{{ participantCountInfoBean.maleParticipantCount }}</el-col>
         <el-col :span="3">结算女生人数：{{ participantCountInfoBean.femalParticipantCount }}</el-col>
       </el-row>
     </div>
