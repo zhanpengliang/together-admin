@@ -137,11 +137,17 @@
 <script>
 import { updateActivityInfo } from '@/api/activityUpdate.js'
 import { queryActivityDetail } from '@/api/activityDetail.js'
+import { getRandom } from '@/utils/random.js'
+import { queryCredential } from '@/api/getCredential.js'
+
 import WangEditor from 'wangeditor'
+import COS from 'cos-js-sdk-v5'
 
 export default {
   data() {
     return {
+      cos: null,
+      editor: null,
       activity: {
         subject: '',
         activityType: '1',
@@ -206,8 +212,7 @@ export default {
           { required: true, message: '请输入活动费用', trigger: 'blur' }
         ]
       },
-      activityId: null,
-      editor: null
+      activityId: null
     }
   },
   beforeCreate() {
@@ -217,7 +222,42 @@ export default {
     console.log('created')
   },
   mounted() {
-    console.log('mounted')
+    // 初始化实例
+    this.cos = new COS({
+        getAuthorization: function (options, callback) {
+            queryCredential().then(response => {
+              if (response.status === 200) {
+                if (response.data.status === true) {
+                  callback({
+                      TmpSecretId: response.data.credentials.tmpSecretId,
+                      TmpSecretKey: response.data.credentials.tmpSecretKey,
+                      XCosSecurityToken: response.data.credentials.sessionToken,
+                      StartTime: response.data.startTime, // 时间戳，单位秒，如：1580000000，建议返回服务器时间作为签名的开始时间，避免用户浏览器本地时间偏差过大导致签名错误
+                      ExpiredTime: response.data.expiredTime, // 时间戳，单位秒，如：1580000900
+                  });
+                } else {
+                  this.$alert(response.statusText, '上传图片失败', {
+                    confirmButtonText: '确定',
+                    callback: action => {
+                    }
+                  })
+                }
+              } else {
+                this.$alert(response.statusText, '上传图片失败', {
+                  confirmButtonText: '确定',
+                  callback: action => {
+                  }
+                })
+              }
+            }).catch(error => {
+              this.$alert(error, '上传图片失败', {
+                confirmButtonText: '确定',
+                callback: action => {
+                }
+              })
+            })
+        }
+    })
     this.createEditor()
     this.initData()
   },
@@ -294,52 +334,32 @@ export default {
     createEditor() {
       this.editor = new WangEditor('#editorMenu', '#editor')
 
-      this.editor.customConfig.zIndex = 100
-      // 显示本地图片上传的tab
-      this.editor.customConfig.uploadImgServer = 'https://www.liangqingzaixian.com:9999/image/upload'
-      // this.editor.customConfig.uploadImgServer = 'http://127.0.0.1:9999/image/upload'
+      this.editor.config.zIndex = 100
       // 隐藏网络图片上传的tab
-      this.editor.customConfig.showLinkImg = false
+      this.editor.config.showLinkImg = false
       // 一次最多传递1张图片
-      this.editor.customConfig.uploadImgMaxLength = 1
-      // 图片名称，对应二进制流
-      this.editor.customConfig.uploadFileName = 'file'
+      this.editor.config.uploadImgMaxLength = 1
       // 关闭粘贴样式的过滤
-      this.editor.customConfig.pasteFilterStyle = false
-      // 上传图片监听函数
-      this.editor.customConfig.uploadImgHooks = {
-        before: function(xhr, editor, files) {
-        // 图片上传之前触发
-        // xhr 是 XMLHttpRequst 对象，editor 是编辑器对象，files 是选择的图片文件
+      this.editor.config.pasteFilterStyle = false
 
-        // 如果返回的结果是 {prevent: true, msg: 'xxxx'} 则表示用户放弃上传
-        // return {
-        //     prevent: true,
-        //     msg: '放弃上传'
-        // }
-        },
-        success: function(xhr, editor, result) {
-        // 图片上传并返回结果，图片插入成功之后触发
-        // xhr 是 XMLHttpRequst 对象，editor 是编辑器对象，result 是服务器端返回的结果
-        },
-        fail: function(xhr, editor, result) {
-        // 图片上传并返回结果，但图片插入错误时触发
-        // xhr 是 XMLHttpRequst 对象，editor 是编辑器对象，result 是服务器端返回的结果
-        },
-        error: function(xhr, editor) {
-        // 图片上传出错时触发
-        // xhr 是 XMLHttpRequst 对象，editor 是编辑器对象
-        },
-        timeout: function(xhr, editor) {
-        // 图片上传超时时触发
-        // xhr 是 XMLHttpRequst 对象，editor 是编辑器对象
-        },
-
-        // 插入图片到富文本
-        // insertImg 是插入图片的函数，editor 是编辑器对象，result 是服务器端返回的结果
-        customInsert: function(insertImg, result, editor) {
-          insertImg(result.imageAddress)
-        }
+      var that = this;
+      this.editor.config.customUploadImg = function (resultFiles, insertImgFn) {
+        var localFile = resultFiles[0]
+        //var remoteFileName = getRandom(10) + localFile.name.substr(localFile.lastIndexOf('.'))
+        var remoteFileName = localFile.name
+        that.cos.putObject({
+            Bucket: 'liangqing-1258329435', /* 必须 */
+            Region: 'ap-beijing',     /* 存储桶所在地域，必须字段 */
+            Key: 'activityPhotos/' + remoteFileName,              /* 必须 */
+            StorageClass: 'STANDARD',
+            Body: localFile, // 上传文件对象
+            onProgress: function(progressData) {
+                console.log(JSON.stringify(progressData))
+            }
+          }, function(err, data) {
+            insertImgFn("https://liangqing-1258329435.cos.ap-beijing.myqcloud.com/activityPhotos/" + remoteFileName);
+            console.log(err || data)
+          });
       }
 
       this.editor.create()
