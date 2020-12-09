@@ -61,7 +61,7 @@
       </el-collapse-item>
 
       <el-collapse-item title="公司介绍-用户可见" name="1">
-        <div style="overflow: auto; margin:30px auto; padding-left: 10px; padding-right: 10px; padding-top: 10px; width: 375px; height: 667px; background-color: #FFFFFF; box-shadow: inset 0px 0px 10px 0px;" v-html="organizerBean.description"></div>
+        <div style="overflow: auto;  padding-left: 10px; padding-right: 10px; padding-top: 10px; width: 375px; height: 667px; background-color: #FFFFFF; box-shadow: inset 0px 0px 10px 0px;" v-html="organizerBean.description"></div>
       </el-collapse-item>
     </el-collapse>
   </div>
