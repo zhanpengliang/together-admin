@@ -30,12 +30,12 @@
           </el-table-column>
           <el-table-column label="结算完成时间" width="150">
             <template slot-scope="scope">
-              {{ scope.row.settleTime }}
+              {{ scope.row.settleTime === null ? '-' : scope.row.settleTime }}
             </template>
           </el-table-column>
           <el-table-column label="结算状态" width="100" prop="settleStatus" sortable>
             <template slot-scope="scope">
-              {{ scope.row.settleStatus }}
+              {{ scope.row.settleStatusMsg }}
             </template>
           </el-table-column>
           <el-table-column label="操作">

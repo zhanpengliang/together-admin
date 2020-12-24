@@ -21,7 +21,7 @@
                   <span>{{ scope.row.typeDescription }}</span>
                 </el-form-item>
                 <el-form-item label="活动费用">
-                  <span>{{ scope.row.fee }}</span>
+                  <span>{{ scope.row.fee }}元</span>
                 </el-form-item>
                 <el-form-item label="活动地点">
                   <span>{{ scope.row.address.province + "-" + scope.row.address.city + "-" + scope.row.address.district }}</span>
@@ -77,9 +77,9 @@
           </el-table-column>
           <el-table-column label="操作" width="350">
             <template slot-scope="scope">
-              <el-row :gutter="10">
+              <el-row :gutter="20">
                 <el-col :span="4"><el-button plain size="mini" @click="queryActivityDetail(scope.$index, scope.row)">预览</el-button></el-col>
-                <el-col :span="6"><el-button plain size="mini" @click="queryOrderList(scope.$index, scope.row)">下单信息</el-button></el-col>
+                <el-col :span="4"><el-button plain size="mini" @click="queryOrderList(scope.$index, scope.row)">订单</el-button></el-col>
                 <el-col :span="4"><el-button plain size="mini" :disabled="scope.row.activityStatus !== 0 && scope.row.activityStatus !== 1 && scope.row.activityStatus !== 2" @click="editActivity(scope.$index, scope.row)">编辑</el-button></el-col>
                 <el-col :span="4"><el-button plain size="mini" :disabled="scope.row.activityStatus !== 0" @click="publishActivity(scope.$index, scope.row)">发布</el-button></el-col>
                 <el-col :span="4"><el-button plain size="mini" :disabled="scope.row.activityStatus !== 0 && scope.row.activityStatus !== 1 && scope.row.activityStatus !== 2" @click="cancelActivity(scope.$index, scope.row)">取消</el-button></el-col>
@@ -183,7 +183,7 @@ export default {
             if (data.errCode !== null && data.errCode === "RECODE_NOT_EXIT") {
               return
             }
-            
+
             this.$alert(data.errMsg, '获取活动列表信息失败', {
               confirmButtonText: '确定',
               callback: action => {
@@ -192,7 +192,7 @@ export default {
             return
           }
           this.list = data.activityBeans
-          
+
           return
         } else {
           this.$alert(response.statusText, '获取活动列表信息失败', {

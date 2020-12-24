@@ -1,18 +1,17 @@
 <template>
   <div class="app-container">
-    <div style="padding: 10px; box-shadow: 0px 0px 6px 0px; width: 100%;">
+    <div style="padding: 10px; width: 100%;">
       <el-row>
-        <el-col :span="3">结算人数：{{ participantCountInfoBean.payCount }}</el-col>
+        <el-col :span="4">结算人数：{{ participantCountInfoBean.payCount }}人</el-col>
+        <el-col :span="20">结算总金额：{{ participantCountInfoBean.totalPayAmount }}元</el-col>
       </el-row>
       <el-row>
-        <el-col :span="3">结算男生人数：{{ participantCountInfoBean.maleParticipantCount }}</el-col>
-        <el-col :span="3">结算女生人数：{{ participantCountInfoBean.femalParticipantCount }}</el-col>
+        <el-col :span="4">结算男生：{{ participantCountInfoBean.maleParticipantCount }}人</el-col>
+        <el-col :span="20">结算女生：{{ participantCountInfoBean.femalParticipantCount }}人</el-col>
       </el-row>
     </div>
-
     <br />
     <br />
-
     <div>
       <el-row style="padding: 2px; box-shadow: 0px 0px 6px 0px; width: 100%;">
         <el-col :span="24">
@@ -104,6 +103,7 @@ export default {
       var postDate = {
       }
       postDate.activityId = this.activityId
+      postDate.orderStatus = [2, 3,]
       getOrderList(postDate).then(response => {
         this.listLoading = false
         if (response.status === 200) {
@@ -133,9 +133,6 @@ export default {
           if (data.orderAndParticipantBeans !== null && data.orderAndParticipantBeans.length !== 0) {
             let index
             for (index in data.orderAndParticipantBeans) {
-              if (data.orderAndParticipantBeans[index].orderInfoBean.orderStatus !== 3) {//活动完成的订单状态才参与结算
-                continue
-              }
               const participantBean = data.orderAndParticipantBeans[index].participantBean
               var participant = {}
               participant.settleStatus = data.orderAndParticipantBeans[index].orderInfoBean.orderStatusMsg

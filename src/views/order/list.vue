@@ -2,20 +2,18 @@
   <div class="app-container">
     <div>
       <el-row>
-        <el-col :span="3">已支付人数：{{ participantCountInfoBean.payCount }}</el-col>
-        <el-col :span="3">下单未支付人数：{{ participantCountInfoBean.orderCount }}</el-col>
-        <el-col :span="3">已取消人数：{{ participantCountInfoBean.cancelCount }}</el-col>
-        <el-col :span="3">报名总人数：{{ participantCountInfoBean.participantCount }}</el-col>
+        <el-col :span="4">支付人数：{{ participantCountInfoBean.payCount }}人</el-col>
+        <el-col :span="20">支付总金额：{{ participantCountInfoBean.totalPayAmount }}元</el-col>
       </el-row>
       <el-row>
-        <el-col :span="3">已支付男生人数：{{ participantCountInfoBean.maleParticipantCount }}</el-col>
-        <el-col :span="3">已支付女生人数：{{ participantCountInfoBean.femalParticipantCount }}</el-col>
+        <el-col :span="4">支付男生：{{ participantCountInfoBean.maleParticipantCount }}人</el-col>
+        <el-col :span="20">支付女生：{{ participantCountInfoBean.totalPayAmount }}人</el-col>
       </el-row>
     </div>
     <br />
     <br />
     <el-collapse @change="handleChange">
-      <el-collapse-item v-for="(participant, index) in list" :key="participant.participantId" :title="participant.name + ' ' + participant.sex + ' ' + participant.age + '岁 ' + participant.orderStatusMsg" :name="index">
+      <el-collapse-item v-for="(participant, index) in list" :key="participant.participantId" :title="participant.name + ' ' + participant.sex + ' ' + participant.age + '岁'" :name="index">
         <el-row>
           <el-col :span="6">
             <div>身份证号码：{{ participant.idCard }}</div>
@@ -60,6 +58,8 @@ export default {
       var postDate = {
       }
       postDate.activityId = this.activityId
+      postDate.orderStatus = [2, 3,]
+
       getOrderList(postDate).then(response => {
         if (response.status === 200) {
           const data = response.data
