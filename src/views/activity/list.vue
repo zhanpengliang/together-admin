@@ -10,7 +10,7 @@
 
     <el-row style="padding: 2px; box-shadow: 0px 0px 6px 0px; width: 100%;">
       <el-col :span="24">
-        <el-table v-loading="listLoading" element-loading-text="Loading" :data="list">
+        <el-table v-loading="listLoading" element-loading-text="Loading" :data="list" :row-key="getRowKey" :expand-row-keys="expandRowList">
           <el-table-column type="expand">
             <template slot-scope="scope">
               <el-form label-position="left" inline class="demo-table-expand">
@@ -45,7 +45,7 @@
                   <span>{{ scope.row.maxParticipantCount }}</span>
                 </el-form-item>
                 <el-form-item label="女生比例">
-                  <span>{{ scope.row.femaleParticipantPercent }}%</span>
+                  <span>{{ scope.row.femaleParticipantPercent < 0 ? '无要求' : scope.row.femaleParticipantPercent + '%' }}</span>
                 </el-form-item>
               </el-form>
             </template>
@@ -157,6 +157,7 @@ export default {
     return {
       list: null,
       listLoading: true,
+      expandRowList: [],
 
       openActivityDetail: false,
       activityBean: {
@@ -170,6 +171,9 @@ export default {
     this.queryActivityList()
   },
   methods: {
+    getRowKey(row) {
+      return row.id
+    },
     queryActivityList() {
       this.listLoading = true
       var postData = {
@@ -192,7 +196,7 @@ export default {
             return
           }
           this.list = data.activityBeans
-
+          this.expandRowList[0] = data.activityBeans[0].id
           return
         } else {
           this.$alert(response.statusText, '获取活动列表信息失败', {

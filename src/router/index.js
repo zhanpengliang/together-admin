@@ -38,20 +38,29 @@ export const constantRoutes = [
   },
 
   {
+    path: '/company',
+    component: Layout,
+    children: [
+      {
+        path: 'detail',
+        name: 'settleDetail',
+        component: () => import('@/views/dashboard/index'),
+        meta: { title: '公司信息', icon: 'dashboard' }
+      }
+    ]
+  },
+
+  {
     path: '/',
     component: Layout,
-    redirect: '/dashboard',
-    children: [{
-      path: 'dashboard',
-      name: 'Dashboard',
-      component: () => import('@/views/dashboard/index'),
-      meta: { title: '公司信息', icon: 'dashboard' }
-    }]
+    redirect: '/activity/list'
   },
+
 
   {
     path: '/activity',
     component: Layout,
+    //redirect: 'activity',
     children: [
       {
         path: 'list',

@@ -1,33 +1,66 @@
 <template>
   <div class="app-container">
-    <div>
-      <el-row>
-        <el-col :span="4">支付人数：{{ participantCountInfoBean.payCount }}人</el-col>
-        <el-col :span="20">支付总金额：{{ participantCountInfoBean.totalPayAmount }}元</el-col>
-      </el-row>
-      <el-row>
-        <el-col :span="4">支付男生：{{ participantCountInfoBean.maleParticipantCount }}人</el-col>
-        <el-col :span="20">支付女生：{{ participantCountInfoBean.totalPayAmount }}人</el-col>
-      </el-row>
-    </div>
+    <el-row style="padding: 2px;">
+      <el-col :span="4">支付人数：{{ participantCountInfoBean.payCount }}人</el-col>
+      <el-col :span="20">支付总金额：{{ participantCountInfoBean.totalPayAmount }}元</el-col>
+    </el-row>
+    <el-row style="padding: 2px;">
+      <el-col :span="4">支付男生：{{ participantCountInfoBean.maleParticipantCount }}人</el-col>
+      <el-col :span="20">支付女生：{{ participantCountInfoBean.femalParticipantCount }}人</el-col>
+    </el-row>
     <br />
     <br />
-    <el-collapse @change="handleChange">
-      <el-collapse-item v-for="(participant, index) in list" :key="participant.participantId" :title="participant.name + ' ' + participant.sex + ' ' + participant.age + '岁'" :name="index">
-        <el-row>
-          <el-col :span="6">
-            <div>身份证号码：{{ participant.idCard }}</div>
-            <div>籍贯：{{ participant.province + ' ' + participant.city + ' ' + participant.district + ' ' + participant.addressDetail }}</div>
-            <div>所在公司：{{ participant.company }}</div>
-            <div>公司任职：{{ participant.profession }}</div>
-            <div>年收入：{{ participant.income }} 万元</div>
-          </el-col>
-          <el-col :span="18">
-            <el-image v-for="url in participant.imageList" :key="url" style="width: 200px; height: 200px" :src="url" :preview-src-list="participant.imageList" />
-          </el-col>
-        </el-row>
-      </el-collapse-item>
-    </el-collapse>
+    <el-row style="padding: 2px; box-shadow: 0px 0px 6px 0px; width: 100%;">
+     <el-col :span="24">
+      <el-table v-loading="listLoading" element-loading-text="Loading" :data="list" @expand-change="handleExpand">
+        <el-table-column type="expand">
+          <template slot-scope="scope">
+            <el-image v-for="url in scope.row.imageList" :key="url" style="width: 200px; height: 200px" :src="url" :preview-src-list="scope.row.imageList" />
+          </template>
+        </el-table-column>
+        <el-table-column label="姓名" width="200">
+          <template slot-scope="scope">
+            {{ scope.row.name }}
+          </template>
+        </el-table-column>
+        <el-table-column label="性别" width="150" prop="activityBeginTime">
+          <template slot-scope="scope">
+            <span>{{ scope.row.sex }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="年龄" width="200">
+          <template slot-scope="scope">
+            {{ scope.row.age }}
+          </template>
+        </el-table-column>
+        <el-table-column label="籍贯" width="100">
+          <template slot-scope="scope">
+            {{ scope.row.province + ' ' + scope.row.city + ' ' + scope.row.district + ' ' + scope.row.addressDetail }}
+          </template>
+        </el-table-column>
+        <el-table-column label="身份证" width="100">
+          <template slot-scope="scope">
+            {{ (scope.row.idCard === null || scope.row.idCard === undefined || scope.row.idCard === "") ? '-' : scope.row.idCard }}
+          </template>
+        </el-table-column>
+        <el-table-column label="职业" width="100">
+          <template slot-scope="scope">
+            {{ scope.row.profession }}
+          </template>
+        </el-table-column>
+        <el-table-column label="所在公司" width="150">
+          <template slot-scope="scope">
+            {{ (scope.row.company === null || scope.row.company === undefined || scope.row.company === "") ? '-' : scope.row.company }}
+          </template>
+        </el-table-column>
+        <el-table-column label="年收入" width="100" prop="settleStatus" sortable>
+          <template slot-scope="scope">
+            {{ (scope.row.income === null || scope.row.income === 0) ? '-' : scope.row.income + '万元' }}
+          </template>
+        </el-table-column>
+      </el-table>
+     </el-col>
+    </el-row>
   </div>
 </template>
 
@@ -37,12 +70,15 @@ import { queryImgAddress } from '@/api/image.js'
 import { RECODE_NOT_EXIT } from '@/utils/error.js'
 import { isEmpty } from '@/utils/string.js'
 
-
 export default {
   data() {
     return {
       list: null,
       participantCountInfoBean: {
+        payCount: 0,
+        totalPayAmount: 0,
+        maleParticipantCount: 0,
+        femalParticipantCount: 0
       },
       listLoading: true,
       openCount: 0
@@ -61,21 +97,13 @@ export default {
       postDate.orderStatus = [2, 3,]
 
       getOrderList(postDate).then(response => {
+        this.listLoading = false
         if (response.status === 200) {
           const data = response.data
           if (data === null || data.status === false) {
             this.loading = false
-            if (data.errCode === RECODE_NOT_EXIT.code) { // 不存在订单信息
-              this.participantCountInfoBean = {
-                payCount: 0,
-                orderCount: 0,
-                cancelCount: 0,
-                participantCount: 0,
-                maleParticipantCount: 0,
-                femalParticipantCount: 0
-              }
-            } else {
-              this.$alert(data.errMsg, '获取活动参与者列表失败', {
+            if (data.errCode !== RECODE_NOT_EXIT.code) {
+              this.$alert(data.errMsg, '获取订单信息失败', {
                 confirmButtonText: '确定',
                 callback: action => {
                 }
@@ -97,6 +125,9 @@ export default {
               participant.sex = participantBean.sexStr
               participant.age = participantBean.age
               participant.idCard = participantBean.idCard
+              participant.phoneNumber = data.orderAndParticipantBeans[index].accountBean.phoneNumber
+              participant.nickName = data.orderAndParticipantBeans[index].accountBean.nickName
+              participant.sign = data.orderAndParticipantBeans[index].accountBean.sign
               if (participantBean.bornAddress !== null) {
                 participant.province = participantBean.bornAddress.province
                 participant.city = participantBean.bornAddress.city
@@ -115,23 +146,8 @@ export default {
             }
           }
           this.list = tempList
-
-          if (data.participantCountInfoBean === null) {
-            this.participantCountInfoBean = {
-              payCount: 0,
-              orderCount: 0,
-              cancelCount: 0,
-              participantCount: 0,
-              maleParticipantCount: 0,
-              femalParticipantCount: 0
-            }
-          } else {
-            this.participantCountInfoBean = data.participantCountInfoBean
-          }
-
-          this.listLoading = false
+          this.participantCountInfoBean = data.participantCountInfoBean
         } else {
-          this.loading = false
           this.$alert(response.statusText, '获取活动列表信息失败', {
             confirmButtonText: '确定',
             callback: action => {
@@ -139,44 +155,25 @@ export default {
           })
         }
       }).catch(error => {
-        this.loading = false
+        this.listLoading = false
         this.$alert(error, '获取活动列表信息失败', {
           confirmButtonText: '确定',
           callback: action => {
           }
         })
-        return
       })
     },
 
-    handleChange(participantIndexs) {
-      console.log(participantIndexs)
+    handleExpand(row, expandedRows) {
 
-      // 已经全部关闭
-      if (participantIndexs === null || participantIndexs.length === 0) {
-        this.openCount = 0
-        return
-      }
-
-      // 关闭面板
-      if (this.openCount > participantIndexs.length) {
-        this.openCount = participantIndexs.length
-        return
-      }
-
-      // 打开面板
-      /**
-       * 已经加载过，不再重新加载
-       */
-      const participantIndex = participantIndexs[participantIndexs.length - 1]
-      if (this.list[participantIndex].imageBeanList !== undefined && this.list[participantIndex].imageBeanList !== null && this.list[participantIndex].imageBeanList.length !== 0) {
+      if (row.imageList !== undefined && row.imageList !== null && row.imageList.length !== 0) {
         return
       }
 
       var postData = {
 
       }
-      postData.accountId = this.list[participantIndex].accountId
+      postData.accountId = row.accountId
       postData.imageType = 2
       queryImgAddress(postData).then(response => {
         if (response.status === 200) {
@@ -189,7 +186,7 @@ export default {
                 tmptImg.push(data.imageBeanList[index].imageAddress)
               }
             }
-            this.list[participantIndex].imageList = tmptImg
+            row.imageList = tmptImg
           } else {
             this.$alert(data.errMsg, '加载生活照失败', {
               confirmButtonText: '确定',
