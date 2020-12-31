@@ -8,6 +8,14 @@
       <el-col :span="24"><br /></el-col>
     </el-row>
 
+    <el-tabs v-model="selectActivityType" @tab-click="handleActivityList">
+        <el-tab-pane label="草稿" name="0"></el-tab-pane>
+        <el-tab-pane label="报名中" name="1"></el-tab-pane>
+        <el-tab-pane label="即将开始" name="2"></el-tab-pane>
+        <el-tab-pane label="已结束" name="4"></el-tab-pane>
+        <el-tab-pane label="已取消" name="3"></el-tab-pane>
+    </el-tabs>
+
     <el-row style="padding: 2px; box-shadow: 0px 0px 6px 0px; width: 100%;">
       <el-col :span="24">
         <el-table v-loading="listLoading" element-loading-text="Loading" :data="list" :row-key="getRowKey" :expand-row-keys="expandRowList">
@@ -158,6 +166,7 @@ export default {
       list: null,
       listLoading: true,
       expandRowList: [],
+      selectActivityType: "2",
 
       openActivityDetail: false,
       activityBean: {
@@ -174,11 +183,20 @@ export default {
     getRowKey(row) {
       return row.id
     },
+    handleActivityList(tab, event) {
+      this.queryActivityList()
+    },
     queryActivityList() {
+      this.list = null
       this.listLoading = true
       var postData = {
       }
+      var activityStatus = [
+
+      ]
+      activityStatus[0] = this.selectActivityType
       postData.accountId = this.$store.state.user.accountId
+      postData.activityStatus = activityStatus
       getActivityList(postData).then(response => {
         this.listLoading = false
         if (response.status === 200) {
